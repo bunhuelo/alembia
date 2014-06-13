@@ -98,7 +98,7 @@ void invpbox(unsigned char* block)
 	if (block[0]&2) tempblock[6]|=1;
 	if (block[0]&4) tempblock[7]|=1;
 	if (block[0]&8) tempblock[2]|=32;
-	if (block[0]&16) tempblock[0]]|=64;
+	if (block[0]&16) tempblock[0]|=64;
 	if (block[0]&32) tempblock[1]|=32;
 	if (block[0]&64) tempblock[4]|=1;
 	if (block[0]&128) tempblock[3]|=2;
