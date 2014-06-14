@@ -7,7 +7,7 @@
 
 #include <string.h>
 
-unsigned char tempblock[8]={};
+unsigned char tempblock[8];
 
 void pbox(unsigned char* block)
 {

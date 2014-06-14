@@ -26,11 +26,11 @@ unsigned char c_sboxa[256]=
 	0xc2, 0xd6, 0x0f, 0xfd, 0x1f, 0xab, 0x27, 0xf0, 0xb9, 0x40, 0xa3, 0x72, 0xfc, 0x07, 0xdc, 0xd8,
 	0x08, 0x2b, 0x7f, 0x28, 0xa2, 0x73, 0xb2, 0x96, 0x1d, 0x6b, 0x16, 0xc1, 0x8e, 0x4c, 0x9b, 0x65
 };
-unsigned char inv_c_sboxa[256]={};
+unsigned char inv_c_sboxa[256]={0};
 
 void sboxa(unsigned char* character)
 {
-	*character=c_sboxa[character];
+	*character=c_sboxa[*character];
 }
 
 void invsboxa(unsigned char* character)
@@ -38,5 +38,5 @@ void invsboxa(unsigned char* character)
 	unsigned char i;
 	/* not initialized yet? */
 	if(inv_c_sboxa[0]==0) for(i=0;i<256;++i) inv_c_sboxa[c_sboxa[i]]=i;
-	*character=inv_c_sboxa[character];
+	*character=inv_c_sboxa[*character];
 }
