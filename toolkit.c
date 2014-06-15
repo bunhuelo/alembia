@@ -6,6 +6,7 @@
  */
 
 #include <stdlib.h>
+#include "toolkit.h"
 
 void memrev(unsigned char* destination,unsigned char* source, unsigned int count)
 {

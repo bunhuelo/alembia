@@ -8,7 +8,6 @@
 #ifndef PBOX_H_
 #define PBOX_H_
 
-extern unsigned char* tempblock;
 extern void pbox(unsigned char* block);
 extern void invpbox(unsigned char* block);
 

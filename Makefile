@@ -24,8 +24,8 @@ clean:
 #blpipe: blcipher.o blpipe.c blpipe.h
 #	$(CC) $(CFLAGS) -o blpipe blcipher.o blpipe.c
   
-test: test.c pbox.o sbox_alpha.o sbox_bravo.o ale.o toolkit.o
-	$(CC) $(CFLAGS) -o test test.c pbox.o sbox_alpha.o sbox_bravo.o ale.o toolkit.o
+test: test.c pbox.o sbox_alpha.o sbox_bravo.o ale.o toolkit.o mbia.o
+	$(CC) $(CFLAGS) -o test test.c pbox.o sbox_alpha.o sbox_bravo.o ale.o toolkit.o mbia.o
 	
 pbox.o: pbox.c pbox.h
 	$(CC) $(CFLAGS) -c pbox.c
@@ -39,7 +39,9 @@ sbox_bravo.o: sbox_bravo.c sbox_bravo.h
 toolkit.o: toolkit.c toolkit.h
 	$(CC) $(CFLAGS) -c toolkit.c
 	
-ale.o: ale.c ale.h
+ale.o: ale.c ale.h #toolkit.o sbox_alpha.o sbox_bravo.o pbox.o
 	$(CC) $(CFLAGS) -c ale.c
 	
+mbia.o: mbia.c mbia.h #toolkit.o sbox_alpha.o sbox_bravo.o pbox.o
+	$(CC) $(CFLAGS) -c mbia.c
 	

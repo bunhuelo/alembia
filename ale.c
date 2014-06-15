@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include "ale.h"
 #include "pbox.h"
 #include "sbox_alpha.h"
 #include "sbox_bravo.h"
@@ -33,21 +34,14 @@ void ale_encrypt(unsigned char* block, unsigned char* key)
 		/* P-Box */
 		pbox(buffer2); pbox(buffer2+8);
 
-		/* S-Box Alpha */
-		for(loopcounter=0;loopcounter<16;++loopcounter) sboxa(buffer2+loopcounter);
-
-		/* XOR */
-		for(loopcounter=0;loopcounter<16;++loopcounter) buffer2[loopcounter]^=keycopy[loopcounter];
-
-		/* S-Box Bravo */
-		for(loopcounter=0;loopcounter<16;++loopcounter) sboxb(buffer2+loopcounter);
-
-		/* ROTR */
 		for(loopcounter=0;loopcounter<16;++loopcounter)
-			buffer2[loopcounter]=rotr(buffer2[loopcounter],(unsigned short int) keycopy[loopcounter+16]%8);
-
-		/* ADD */
-		for(loopcounter=0;loopcounter<16;++loopcounter) buffer2[loopcounter]+=keycopy[loopcounter+16];
+		{
+			sboxa(buffer2+loopcounter); /* S-Box Alpha */
+			buffer2[loopcounter]^=keycopy[loopcounter]; /* XOR */
+			sboxb(buffer2+loopcounter); /* S-Box Bravo */
+			buffer2[loopcounter]=rotr(buffer2[loopcounter],(unsigned short int) keycopy[loopcounter+16]%8); /* ROTR */
+			buffer2[loopcounter]+=keycopy[loopcounter+16]; /* ADD */
+		}
 
 		/* Generate next key */
 		for(loopcounter=0;loopcounter<16;++loopcounter)
@@ -89,21 +83,14 @@ void ale_decrypt(unsigned char* block, unsigned char* key)
 	/* Decrypt block */
 	for(round=9;round>=0;--round)
 	{
-		/* SUB */
-		for(loopcounter=0;loopcounter<16;++loopcounter) buffer1[loopcounter]-=keysched[round][loopcounter+16];
-
-		/* ROTL */
 		for(loopcounter=0;loopcounter<16;++loopcounter)
-			buffer1[loopcounter]=rotl(buffer1[loopcounter],(unsigned short int) keysched[round][loopcounter+16]%8);
-
-		/* S-Box Bravo */
-		for(loopcounter=0;loopcounter<16;++loopcounter) invsboxb(buffer1+loopcounter);
-
-		/* XOR */
-		for(loopcounter=0;loopcounter<16;++loopcounter) buffer1[loopcounter]^=keysched[round][loopcounter];
-
-		/* S-Box Alpha */
-		for(loopcounter=0;loopcounter<16;++loopcounter) invsboxa(buffer1+loopcounter);
+		{
+			buffer1[loopcounter]-=keysched[round][loopcounter+16]; /* SUB */
+			buffer1[loopcounter]=rotl(buffer1[loopcounter],(unsigned short int) keysched[round][loopcounter+16]%8); /* ROTL */
+			invsboxb(buffer1+loopcounter); /* S-Box Bravo */
+			buffer1[loopcounter]^=keysched[round][loopcounter]; /* XOR */
+			invsboxa(buffer1+loopcounter); /* S-Box Alpha */
+		}
 
 		/* P-Box */
 		invpbox(buffer1); invpbox(buffer1+8);

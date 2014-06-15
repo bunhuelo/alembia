@@ -14,11 +14,12 @@
 #include "sbox_alpha.h"
 #include "sbox_bravo.h"
 #include "ale.h"
+#include "mbia.h"
 
 int main()
 {
 	/* Declare */
-	unsigned char *longblock,*testblock,*origblock,*key;
+	unsigned char *longblock,*testblock,*origblock,*key, *wpcn;
 	char testchar,origchar;
 	int i,j,fail;
 
@@ -31,6 +32,8 @@ int main()
 	longblock[16]=0;
 	key=malloc(sizeof(unsigned char)*33);
 	key[32]=0;
+	wpcn=malloc(sizeof(unsigned char)*4);
+	wpcn[4]=0;
 	fail=0;
 
 	/* Phase I - PBOX */
@@ -108,10 +111,39 @@ int main()
 	ale_encrypt(longblock,key);
 	printf(" ALE output:    %s\n",longblock);
 	ale_decrypt(longblock,key);
-	printf(" ALE decrypted: %s\n",longblock);
+	printf(" ALE decrypted: %s\n\n",longblock);
+
+	/* Phase V - MBIA */
+	printf("Test phase V - MBIA\n");
+	memcpy(longblock,"0123456789ABCDEF",16);
+	memcpy(key,"00001111222233334444555566667777",32);
+	printf(" MBIA input:     %s\n",longblock);
+	memcpy(wpcn,"\0\0\0",3);
+	mbia_encrypt(longblock,key,wpcn);
+	printf(" MBIA output:    %s\n",longblock);
+	memcpy(wpcn,"\0\0\0",3);
+	mbia_decrypt(longblock,key,wpcn);
+	printf(" MBIA decrypted: %s\n\n",longblock);
+
+	/* Phase VI - ALEMBIA */
+	printf("Test phase V - ALE/MBIA\n");
+	memcpy(longblock,"0123456789ABCDEF",16);
+	printf(" ALE/MBIA input:     %s\n",longblock);
+	memcpy(wpcn,"abc",3);
+	memcpy(key,"00001111222233334444555566667777",32);
+	mbia_encrypt(longblock,key,wpcn);
+	memcpy(key,"88889999AAAABBBBCCCCDDDDEEEEFFFF",32);
+	ale_encrypt(longblock,key);
+	printf(" ALE/MBIA output:    %s\n",longblock);
+	memcpy(wpcn,"abc",3);
+	memcpy(key,"88889999AAAABBBBCCCCDDDDEEEEFFFF",32);
+	ale_decrypt(longblock,key);
+	memcpy(key,"00001111222233334444555566667777",32);
+	mbia_decrypt(longblock,key,wpcn);
+	printf(" ALE/MBIA decrypted: %s\n\n",longblock);
 
 	/* Clean up */
-	free(testblock);
+	free(testblock);free(origblock);free(longblock);free(key);free(wpcn);
 	return 0;
 }
 

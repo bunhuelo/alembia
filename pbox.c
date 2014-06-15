@@ -6,6 +6,7 @@
  */
 
 #include <string.h>
+#include "pbox.h"
 
 unsigned char tempblock[8];
 
