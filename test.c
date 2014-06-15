@@ -71,8 +71,8 @@ int main()
 		invsboxa((unsigned char*) &testchar);
 		if(origchar!=testchar) fail=1;
 	}
-	if (fail) {printf(" (--) Failed complete S-Box Alpha test.\n\n");exit(1);}
-	else printf(" (++) Successful complete S-Box Alpha test.\n\n");
+	if (fail) {printf(" (--) Failed test of complete S-Box Alpha.\n\n");exit(1);}
+	else printf(" (++) Successful test of complete S-Box Alpha.\n\n");
 
 	/* Phase III - SBOX BRAVO */
 	printf("Test phase III - S-Box Bravo (sbox_bravo.h)\n");
@@ -93,8 +93,8 @@ int main()
 		invsboxb((unsigned char*) &testchar);
 		if(origchar!=testchar) fail=1;
 	}
-	if (fail) {printf(" (--) Failed complete S-Box Bravo test.\n\n");exit(1);}
-	else printf(" (++) Successful complete S-Box Bravo test.\n\n");
+	if (fail) {printf(" (--) Failed test of complete S-Box Bravo.\n\n");exit(1);}
+	else printf(" (++) Successful test of complete S-Box Bravo.\n\n");
 
 	/* Clean up */
 	free(testblock);
