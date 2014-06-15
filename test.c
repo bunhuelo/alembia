@@ -13,12 +13,12 @@
 #include "pbox.h"
 #include "sbox_alpha.h"
 #include "sbox_bravo.h"
+#include "ale.h"
 
 int main()
 {
 	/* Declare */
-	unsigned char* testblock;
-	unsigned char* origblock;
+	unsigned char *longblock,*testblock,*origblock,*key;
 	char testchar,origchar;
 	int i,j,fail;
 
@@ -27,6 +27,10 @@ int main()
 	testblock[8]=0;
 	origblock=malloc(sizeof(unsigned char)*9);
 	origblock[8]=0;
+	longblock=malloc(sizeof(unsigned char)*17);
+	longblock[16]=0;
+	key=malloc(sizeof(unsigned char)*33);
+	key[32]=0;
 	fail=0;
 
 	/* Phase I - PBOX */
@@ -95,6 +99,16 @@ int main()
 	}
 	if (fail) {printf(" (--) Failed test of complete S-Box Bravo.\n\n");exit(1);}
 	else printf(" (++) Successful test of complete S-Box Bravo.\n\n");
+
+	/* Phase IV - ALE */
+	printf("Test phase IV - ALE\n");
+	memcpy(longblock,"0123456789ABCDEF",16);
+	memcpy(key,"00001111222233334444555566667777",32);
+	printf(" ALE input:     %s\n",longblock);
+	ale_encrypt(longblock,key);
+	printf(" ALE output:    %s\n",longblock);
+	ale_decrypt(longblock,key);
+	printf(" ALE decrypted: %s\n",longblock);
 
 	/* Clean up */
 	free(testblock);
