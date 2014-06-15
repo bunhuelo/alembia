@@ -35,8 +35,8 @@ void sboxb(unsigned char* character)
 
 void invsboxb(unsigned char* character)
 {
-	unsigned char i;
+	unsigned short int i;
 	/* not initialized yet? */
-	if(inv_c_sboxb[0]==0) for(i=0;i<256;++i) inv_c_sboxb[c_sboxb[i]]=i;
+	if(inv_c_sboxb[0]==0) for(i=0;i<256;++i) inv_c_sboxb[c_sboxb[i]]=(unsigned char) i;
 	*character=inv_c_sboxb[*character];
 }
