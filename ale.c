@@ -33,7 +33,10 @@ void ale_encrypt(unsigned char* block, unsigned char* key)
 		memrev(buffer2+4,buffer1+12,4);
 
 		/* P-Box */
-		pbox(buffer2); pbox(buffer2+8);
+		for(loopcounter=0;loopcounter<keycopy[6]%24+1;++loopcounter)
+		{
+			pbox(buffer2); pbox(buffer2+8);
+		}
 
 		for(loopcounter=0;loopcounter<16;++loopcounter)
 		{
@@ -97,7 +100,10 @@ void ale_decrypt(unsigned char* block, unsigned char* key)
 		}
 
 		/* P-Box */
-		invpbox(buffer1); invpbox(buffer1+8);
+		for(loopcounter=0;loopcounter<keysched[round][6]%24+1;++loopcounter)
+		{
+			invpbox(buffer1); invpbox(buffer1+8);
+		}
 
 		/* Rearrange bytes */
 		memcpy(buffer2,buffer1,4);

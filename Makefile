@@ -9,8 +9,9 @@ CFLAGS=-Ofast -Wpedantic
 all: alembiapipe test
 
 clean:
-	$(RM) test *.o *.gch
+	$(RM) *.o *.gch
 	$(RM) alembia
+	$(RM) test
 	
 #install: all
 #	cp blpipe /usr/bin/blpipe
