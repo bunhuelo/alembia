@@ -6,7 +6,7 @@ RM=rm -rf
 CFLAGS=-Ofast -Wpedantic
 
 # Here we go:
-all: alembia
+all: alembiapipe
 
 clean:
 	$(RM) test *.o *.gch
@@ -44,4 +44,8 @@ ale.o: ale.c ale.h #toolkit.o sbox_alpha.o sbox_bravo.o pbox.o
 	
 mbia.o: mbia.c mbia.h #toolkit.o sbox_alpha.o sbox_bravo.o pbox.o
 	$(CC) $(CFLAGS) -c mbia.c
+	
+alembiapipe.o: alembiapipe.c alembiapipe.h pbox.o sbox_alpha.o sbox_bravo.o ale.o mbia.o toolkit.o
+	$(CC) $(CFLAGS) -o alembia alembiapipe.c pbox.o sbox_alpha.o sbox_bravo.o ale.o mbia.o toolkit.o
+	
 	

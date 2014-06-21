@@ -21,6 +21,7 @@ void ale_encrypt(unsigned char* block, unsigned char* key)
 	short int round, loopcounter;
 	unsigned char keycopy[32];
 
+	mlock(keycopy,sizeof(char)*32);
 	memcpy(buffer1,block,16);
 	memcpy(keycopy,key,32);
 
@@ -57,6 +58,7 @@ void ale_encrypt(unsigned char* block, unsigned char* key)
 	}
 
 	/* Return buffer contents */
+	munlock(keycopy,sizeof(char)*32);
 	memcpy(block,buffer1,16);
 }
 
@@ -66,11 +68,13 @@ void ale_decrypt(unsigned char* block, unsigned char* key)
 	unsigned char keysched[10][32];
 
 	memcpy(buffer1,block,16);
+	mlock(keysched[0],sizeof(char)*32);
 	memcpy(keysched[0],key,32);
 
 	/* Generate key schedule */
 	for(round=1;round<10;++round)
 	{
+		mlock(keysched[round],sizeof(char)*32);
 		for(loopcounter=0;loopcounter<16;++loopcounter)
 		{
 			keysched[round][loopcounter+16]=keysched[round-1][loopcounter+16]^(unsigned char) round-1;
@@ -102,6 +106,8 @@ void ale_decrypt(unsigned char* block, unsigned char* key)
 
 		/* Prepare for next round */
 		memcpy(buffer1,buffer2,16);
+		memcpy(keysched[round],"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",32);
+		munlock(keysched[round],sizeof(char)*32);
 	}
 
 	/* Return buffer contents */
