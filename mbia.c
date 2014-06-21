@@ -37,12 +37,18 @@ void mbia_encrypt(unsigned char* block, unsigned char* key, unsigned char* wpcn)
 	for(round=0;round<10;++round)
 	{
 		/* P-Box */
-		pbox(buffer1); pbox(buffer1+8);
+		for(loopcounter=0;loopcounter<keysched[round][4]%16+1;++loopcounter)
+		{
+			pbox(buffer1); pbox(buffer1+8);
+		}
 
 		/* S-Box and P-Box */
-		sboxa(buffer1+0); sboxb(buffer1+1); sboxb(buffer1+2); sboxa(buffer1+3);
-		pbox(buffer1+4);
-		sboxb(buffer1+12); sboxa(buffer1+13); sboxa(buffer1+14); sboxb(buffer1+15);
+		for(loopcounter=0;loopcounter<keysched[round][21]%24+1;++loopcounter)
+		{
+			sboxa(buffer1+0); sboxb(buffer1+1); sboxb(buffer1+2); sboxa(buffer1+3);
+			pbox(buffer1+4);
+			sboxb(buffer1+12); sboxa(buffer1+13); sboxa(buffer1+14); sboxb(buffer1+15);
+		}
 
 		/* Mixed WPCN operations */
 		for(loopcounter=0;loopcounter<3;++loopcounter)
@@ -70,8 +76,28 @@ void mbia_encrypt(unsigned char* block, unsigned char* key, unsigned char* wpcn)
 		/* XOR and ADD */
 		for(loopcounter=0;loopcounter<16;++loopcounter)
 		{
-			buffer1[loopcounter]^=keysched[round][loopcounter];
-			buffer1[loopcounter]+=keysched[round][loopcounter+16];
+			switch(keysched[round][15]%4)
+			{
+				case 0:
+					buffer1[loopcounter]^=keysched[round][loopcounter];
+					buffer1[loopcounter]+=keysched[round][loopcounter+16];
+					break;
+
+				case 1:
+					buffer1[loopcounter]+=keysched[round][loopcounter+16];
+					buffer1[loopcounter]^=keysched[round][loopcounter];
+					break;
+
+				case 2:
+					buffer1[loopcounter]+=keysched[round][loopcounter];
+					buffer1[loopcounter]^=keysched[round][loopcounter+16];
+					break;
+
+				case 3:
+					buffer1[loopcounter]^=keysched[round][loopcounter+16];
+					buffer1[loopcounter]+=keysched[round][loopcounter];
+					break;
+			}
 		}
 	}
 
@@ -119,8 +145,28 @@ void mbia_decrypt(unsigned char* block, unsigned char* key, unsigned char* wpcn)
 		/* XOR and ADD */
 		for(loopcounter=0;loopcounter<16;++loopcounter)
 		{
-			buffer1[loopcounter]-=keysched[round][loopcounter+16];
-			buffer1[loopcounter]^=keysched[round][loopcounter];
+			switch(keysched[round][15]%4)
+			{
+				case 0:
+					buffer1[loopcounter]-=keysched[round][loopcounter+16];
+					buffer1[loopcounter]^=keysched[round][loopcounter];
+					break;
+
+				case 1:
+					buffer1[loopcounter]^=keysched[round][loopcounter];
+					buffer1[loopcounter]-=keysched[round][loopcounter+16];
+					break;
+
+				case 2:
+					buffer1[loopcounter]^=keysched[round][loopcounter+16];
+					buffer1[loopcounter]-=keysched[round][loopcounter];
+					break;
+
+				case 3:
+					buffer1[loopcounter]-=keysched[round][loopcounter];
+					buffer1[loopcounter]^=keysched[round][loopcounter+16];
+					break;
+			}
 		}
 
 		/* Swap bytes */
@@ -147,12 +193,18 @@ void mbia_decrypt(unsigned char* block, unsigned char* key, unsigned char* wpcn)
 		buffer1[15]^=wpcn[1];
 
 		/* S-Box and P-Box */
-		invsboxa(buffer1+0); invsboxb(buffer1+1); invsboxb(buffer1+2); invsboxa(buffer1+3);
-		invpbox(buffer1+4);
-		invsboxb(buffer1+12); invsboxa(buffer1+13); invsboxa(buffer1+14); invsboxb(buffer1+15);
+		for(loopcounter=0;loopcounter<keysched[round][21]%24+1;++loopcounter)
+		{
+			invsboxa(buffer1+0); invsboxb(buffer1+1); invsboxb(buffer1+2); invsboxa(buffer1+3);
+			invpbox(buffer1+4);
+			invsboxb(buffer1+12); invsboxa(buffer1+13); invsboxa(buffer1+14); invsboxb(buffer1+15);
+		}
 
 		/* P-Box */
-		invpbox(buffer1); invpbox(buffer1+8);
+		for(loopcounter=0;loopcounter<keysched[round][4]%16+1;++loopcounter)
+		{
+			invpbox(buffer1); invpbox(buffer1+8);
+		}
 	}
 
 	/* Unlock */
